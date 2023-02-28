@@ -61,7 +61,20 @@ class Graph:
     
 
     def get_path_with_power(self, src, dest, power):
-        raise NotImplementedError
+        noeud_visite = {noeud:False for noeud in self.nodes}
+
+        def recherche_de_chemin(noeud, chemin):
+            if noeud==dest:
+                return chemin
+            for voisin in self.graph[noeud]:
+                voisin, power_min, dist = voisin
+                if not noeud_visite[voisin] and power_min <= power:
+                    noeud_visite[voisin] = True
+                    resultat = recherche_de_chemin(voisin, chemin+[voisin])
+                    if resultat is not None:
+                        return resultat
+            return None        
+        return recherche_de_chemin(src, [src])
     
 
     def connected_components(self):

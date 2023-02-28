@@ -1,4 +1,4 @@
-# This will work if ran from the root folder.
+# This will work if ran from the root=ensae-prog23 folder.
 import sys 
 sys.path.append("delivery_network")
 
