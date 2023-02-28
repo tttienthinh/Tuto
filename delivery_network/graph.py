@@ -55,7 +55,9 @@ class Graph:
         dist: numeric (int or float), optional
             Distance between node1 and node2 on the edge. Default is 1.
         """
-        raise NotImplementedError
+        self.nb_edges += 1
+        self.graph[node1].append((node2, power_min, dist))
+        self.graph[node2].append((node1, power_min, dist))
     
 
     def get_path_with_power(self, src, dest, power):
@@ -63,7 +65,23 @@ class Graph:
     
 
     def connected_components(self):
-        raise NotImplementedError
+        liste_composantes = []
+        noeud_visite = {noeud:False for noeud in self.nodes}
+
+        def dfs(noeud):
+            composante = [noeud]
+            for voisin in self.graph[noeud]:
+                voisin = voisin[0]
+                if not noeud_visite[voisin]:
+                    noeud_visite[voisin] = True
+                    composante += dfs(voisin)
+            return composante
+        
+        for noeud in self.nodes:
+            if not noeud_visite[noeud]:
+                liste_composantes.append(dfs(noeud))
+
+        return liste_composantes
 
 
     def connected_components_set(self):
@@ -100,4 +118,20 @@ def graph_from_file(filename):
     G: Graph
         An object of the class Graph with the graph from file_name.
     """
-    raise NotImplementedError
+    with open(filename) as file:
+        ligne1 = file.readline().split()
+        n = int(ligne1[0])
+        m = int(ligne1[1])
+        nodes = [i for i in range(1, n+1)]
+        G = Graph(nodes)
+        for i in range(m):
+            lignei = file.readline().split()
+            node1 = int(lignei[0])
+            node2 = int(lignei[1])
+            power_min = int(lignei[2])
+            if len(lignei) > 3:
+                dist = int(lignei[3])
+                G.add_edge(node1, node2, power_min, dist)
+            else:
+                G.add_edge(node1, node2, power_min)
+    return G
